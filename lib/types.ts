@@ -1,0 +1,19 @@
+
+
+export interface User {
+    username: string;
+    password: string;
+}
+
+
+export interface Order {
+    id: number;
+    name: {
+        first: string;
+        last: string;
+        title: string;
+    };
+    phone: string;
+    picture: string;
+    date: string;
+}

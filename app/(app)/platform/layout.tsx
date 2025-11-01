@@ -1,11 +1,7 @@
 import type {Metadata} from "next";
-import {Open_Sans} from "next/font/google";
 import "@/styles/globals.css";
+import Sidebar from "@/components/Sidebar";
 
-const openSans = Open_Sans({
-    variable: "--font-open-sans",
-    subsets: ["latin"],
-});
 
 
 export const metadata: Metadata = {
@@ -19,12 +15,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-        <body
-            className={`${openSans.variable} antialiased`}
-        >
-        {children}
-        </body>
-        </html>
+        <div className={"flex h-dvh"}>
+            <Sidebar/>
+            <main className={"flex grow"}>
+                {children}
+            </main>
+        </div>
     );
 }

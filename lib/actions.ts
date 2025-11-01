@@ -1,0 +1,90 @@
+import { User} from "@/lib/types";
+
+export async function signUpAction(formData: User) {
+
+    const {username,password} = formData
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+    if (users.find((u: any) => u.username === username)) {
+        return  { success: false, message: "User already exists" };
+    }
+
+    try {
+        const res = await fetch("/api/sign-up", {
+            method: "POST",
+            body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            return { success: false, message: data.message }
+        }
+
+
+        const data = await res.json()
+
+        const oldData = localStorage.getItem("users")
+        const parsedData = oldData ? JSON.parse(oldData) : [];
+
+        localStorage.setItem("users", JSON.stringify([...parsedData, data.data]));
+
+
+        return { success: true };
+
+
+    } catch (err) {
+        console.error(err);
+        return { success: false, message: "Something went wrong" }
+    }
+
+
+}
+
+
+
+export async function signInAction(formData: User) {
+
+    const {username,password} = formData
+
+
+
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+    if (users.every((u: any) => u.username !== username)) {
+        console.log("error")
+        return  { success: false, message: "User not found" };
+    }
+
+    if (users.some((u: any) => u.username === username && u.password !== password)) {
+        console.log("error 2")
+        return  { success: false, message: "Incorrect password" };
+    }
+
+    try {
+        const res = await fetch("/api/sign-in", {
+            method: "POST",
+            body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            return { success: false, message: data.message }
+        }
+
+
+        // const data = await res.json()
+
+        return { success: true };
+
+
+    } catch (err) {
+        console.error(err);
+        return { success: false, message: "Something went wrong" }
+    }
+
+
+}
+
+

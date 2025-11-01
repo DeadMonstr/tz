@@ -1,0 +1,67 @@
+"use client"
+import Link from "next/link";
+import {usePathname, useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+
+
+export default function Sidebar() {
+
+    const pathname = usePathname(); // 👈 вернёт строку, например "/platform/orders"
+    const router = useRouter();
+
+    const links = [
+        { href: "/platform/orders", label: "Orders" },
+    ];
+
+
+    const onSignOut = async () => {
+
+        try {
+            const res = await fetch("/api/sign-out", {
+                method: "GET",
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to sign out");
+            }
+
+            router.push("/")
+
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+
+
+    }
+
+    return (
+        <div className={"w-[15%] h-full bg-black p-5 gap-10 flex flex-col"}>
+            <h1 className={"text-white"}>Logo</h1>
+            <nav className={"grow "}>
+                <ul className={"flex flex-col gap-3"}>
+                    {links.map((link) => {
+                        const active = pathname === link.href;
+                        return (
+                            <li key={link.href}>
+                                <Link
+                                    href={link.href}
+                                    className={`block px-3 py-2 rounded ${
+                                        active ? "bg-blue-600 text-white" : "text-gray-400 hover:text-white"
+                                    }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
+
+
+            <Button onClick={onSignOut} className={"w-full"}>
+                Sign out
+            </Button>
+
+        </div>
+    )
+}

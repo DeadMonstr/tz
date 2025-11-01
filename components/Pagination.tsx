@@ -1,0 +1,74 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+
+type Props = {
+    page: number;
+    totalPages: number;
+    onChange: (page: number) => void;
+    siblingCount?: number;
+    className?: string;
+};
+
+function range(start: number, end: number) {
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+export default function Pagination({
+                                       page,
+                                       totalPages,
+                                       onChange,
+                                       siblingCount = 1,
+                                       className,
+                                   }: Props) {
+    if (totalPages <= 1) return null;
+
+    const clamped = (p: number) => Math.min(Math.max(1, p), totalPages);
+
+    const start = Math.max(1, page - siblingCount);
+    const end = Math.min(totalPages, page + siblingCount);
+    const pages = range(start, end);
+
+    const showLeftEllipsis = start > 2;
+    const showRightEllipsis = end < totalPages - 1;
+
+    return (
+        <div className={`flex items-center gap-2 ${className ?? ""}`}>
+
+            <Button variant="outline" size="sm" onClick={() => onChange(clamped(page - 1))} disabled={page === 1} aria-label="Previous page">
+                Prev
+            </Button>
+
+
+            {page !== 1 && start > 1 && (
+                <Button variant="outline" size="sm" onClick={() => onChange(1)}>1</Button>
+            )}
+            {showLeftEllipsis && <span className="px-1 text-muted-foreground">…</span>}
+
+
+            {pages.map((p) => (
+                <Button
+                    key={p}
+                    size="sm"
+                    variant={p === page ? "default" : "outline"}
+                    onClick={() => onChange(p)}
+                    aria-current={p === page ? "page" : undefined}
+                >
+                    {p}
+                </Button>
+            ))}
+
+            {showRightEllipsis && <span className="px-1 text-muted-foreground">…</span>}
+            {page !== totalPages && end < totalPages && (
+                <Button variant="outline" size="sm" onClick={() => onChange(totalPages)}>
+                    {totalPages}
+                </Button>
+            )}
+
+            <Button variant="outline" size="sm" onClick={() => onChange(clamped(page + 1))} disabled={page === totalPages} aria-label="Next page">
+                Next
+            </Button>
+
+        </div>
+    );
+}
